@@ -255,8 +255,6 @@ Correspondencia entre muestras, corridas del SRA y variables (contenido de `mani
 
 ```bash
 qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path manifest.txt --input-format PairedEndFastqManifestPhred33V2 --output-path demuxed_seqs.qza
-
-Imported manifest.txt as PairedEndFastqManifestPhred33V2 to demuxed_seqs.qza
 ```
 
 > **Comentario (comando):**
@@ -289,8 +287,6 @@ mkdir visualization
 
 ```bash
 qiime demux summarize --i-data demuxed_seqs.qza --o-visualization visualization/seqs_quality.qzv
-
-Saved Visualization to: visualization/seqs_quality.qzv
 ```
 
 > **Comentario:**
@@ -300,26 +296,6 @@ Saved Visualization to: visualization/seqs_quality.qzv
 
 ### Descargar con WinSCP el archivo `seqs_quality.qzv` y abrirlo en QIIME 2 View (https://view.qiime2.org/)
 
-> **[Captura pendiente: pestaña *Overview* de `seqs_quality.qzv`]**
-
-**Figura 5.** Pestaña *Overview* de `seqs_quality.qzv`: resumen del número de lecturas por muestra y tabla con los conteos de lecturas forward y reverse de cada muestra.
-
-> **Comentario (figura 5):**
-> - Las 24 muestras suman **5 865 440 pares de lecturas**. El número de lecturas forward y reverse es idéntico en cada muestra, como corresponde a datos pareados.
-> - La muestra con menos lecturas es **11.Universitaria (105 680)** y la que tiene más, **21.Libertadores (291 994)**; el resto tiene entre 175 381 y 287 437. Son los mismos valores que reporta el artículo (promedio de 244 393 lecturas por muestra, rango de 105 680 a 287 437).
-> - Universitaria tiene menos de la mitad de lecturas que las demás. Se volverá a ver en todos los pasos siguientes.
-
-> **[Captura pendiente: pestaña *Interactive Quality Plot* de `seqs_quality.qzv`]**
-
-**Figura 6.** Pestaña *Interactive Quality Plot*: diagramas de cajas de la calidad Phred en cada posición de las lecturas forward (izquierda) y reverse (derecha).
-
-> **Comentario (figura 6):**
-> - Cada caja resume la calidad de las 10 000 lecturas submuestreadas en una posición: la línea central es la mediana y los extremos, los percentiles 25 y 75. Una calidad Phred de 30 equivale a una probabilidad de error de 1 en 1 000; una de 20, a 1 en 100.
-> - Las lecturas miden **251 nt** (secuenciación de 2 × 251 en MiSeq).
-> - **Forward:** la mediana se mantiene en 37–38 hasta cerca del final; en las últimas posiciones baja y en la posición 251 cae a 27.
-> - **Reverse:** la mediana se mantiene en 37–38 hasta la posición 220, baja a 32–33 entre las posiciones 230 y 240 y cae a 13 en la última posición.
-> - Es el patrón típico de Illumina: la calidad disminuye hacia el extremo 3′ de cada lectura, y más en la reverse.
-
 > **Punto de control:** Anote el número de lecturas de cada muestra y la posición en la que empieza a caer la calidad de cada lectura. Los usará para explicar los resultados de DADA2.
 
 ## 4. Recorte de los primers con cutadapt
@@ -328,8 +304,6 @@ Las lecturas empiezan con la secuencia del primer, que no es información bioló
 
 ```bash
 qiime cutadapt trim-paired --i-demultiplexed-sequences demuxed_seqs.qza --p-front-f CCTACGGGNGGCWGCAG --p-front-r GACTACHVGGGTATCTAATCC --p-minimum-length 100 --p-discard-untrimmed --p-cores 10 --o-trimmed-sequences demuxed_seqs_trimmed.qza
-
-Saved SampleData[PairedEndSequencesWithQuality] to: demuxed_seqs_trimmed.qza
 ```
 
 > **Comentario (comando):**
@@ -345,22 +319,11 @@ Saved SampleData[PairedEndSequencesWithQuality] to: demuxed_seqs_trimmed.qza
 
 ```bash
 qiime demux summarize --i-data demuxed_seqs_trimmed.qza --o-visualization visualization/seqs_quality_trimmed.qzv
-
-Saved Visualization to: visualization/seqs_quality_trimmed.qzv
 ```
 
 > **Comentario:** genera el mismo reporte de calidad, ahora con las lecturas recortadas, para comparar el antes y el después.
 
 ### Descargar `seqs_quality_trimmed.qzv` y compararlo con `seqs_quality.qzv` en QIIME 2 View
-
-> **[Captura pendiente: pestaña *Interactive Quality Plot* de `seqs_quality_trimmed.qzv`]**
-
-**Figura 7.** Calidad por posición de las lecturas recortadas. Las lecturas son más cortas que las originales y la caja de la última posición tiene muy pocas lecturas.
-
-> **Comentario (figura 7):**
-> - Se conservan **5 793 891 de 5 865 440 pares (98,8 %)**. En ninguna muestra se pierde más del 2 %: los primers estaban en casi todas las lecturas, y `--p-discard-untrimmed` casi no descartó nada. Si se perdiera más del 20–30 %, habría que revisar la secuencia de los primers.
-> - Tras el recorte, la lectura forward mide **~234 nt** (251 − 17 nt del primer 341F) y la reverse, **~230 nt** (251 − 21 nt del primer 805R).
-> - **Solapamiento esperado:** el amplicón V3-V4 sin primers mide unos 400–430 nt. Las dos lecturas suman 464 nt, así que se superponen solo en unos 35–60 nt. DADA2 necesita al menos 12 nt de solapamiento para unirlas, y en esa zona están las bases de peor calidad: el final de cada lectura.
 
 > **Punto de control:** ¿Cuántas lecturas se perdieron en cada muestra con el recorte? Con la longitud del amplicón y de las lecturas recortadas, calcule cuántos nucleótidos se superponen. ¿Qué pasaría si se truncaran las lecturas en las posiciones 200 y 200?
 
@@ -406,8 +369,6 @@ cp /data/2026_1/metagenomics/illumina/qiime2/denoising_stats.qza .
 
 ```bash
 qiime metadata tabulate --m-input-file denoising_stats.qza --o-visualization visualization/denoising_stats.qzv
-
-Saved Visualization to: visualization/denoising_stats.qzv
 ```
 
 > **Comentario:**
@@ -416,8 +377,6 @@ Saved Visualization to: visualization/denoising_stats.qzv
 
 ```bash
 qiime feature-table summarize --i-table table.qza --m-sample-metadata-file metadata.txt --o-visualization visualization/table_denoised.qzv
-
-Saved Visualization to: visualization/table_denoised.qzv
 ```
 
 > **Comentario:**
@@ -427,8 +386,6 @@ Saved Visualization to: visualization/table_denoised.qzv
 
 ```bash
 qiime feature-table tabulate-seqs --i-data representatives.qza --o-visualization visualization/representatives.qzv
-
-Saved Visualization to: visualization/representatives.qzv
 ```
 
 > **Comentario:**
@@ -437,11 +394,7 @@ Saved Visualization to: visualization/representatives.qzv
 
 ### Descargar los tres reportes y abrirlos en QIIME 2 View
 
-> **[Captura pendiente: `denoising_stats.qzv`]**
-
-**Figura 8.** Tabla de `denoising_stats.qzv`: número de lecturas de cada muestra al final de cada etapa de DADA2 y porcentaje respecto a la entrada.
-
-> **Comentario (figura 8):**
+> **Comentario:**
 > - Columnas: `input` (pares de entrada), `filtered` (pasan el filtro de calidad), `denoised` (quedan tras el denoising), `merged` (forward y reverse se unieron), `non-chimeric` (no son quiméricas) y los porcentajes de `filtered`, `merged` y `non-chimeric` respecto a la entrada. Las primeras filas:
 >
 > | Muestra | input | filtered | denoised | merged | non-chimeric | % non-chimeric |
@@ -456,24 +409,6 @@ Saved Visualization to: visualization/representatives.qzv
 > - **Quimeras:** se elimina alrededor del 23 % de las lecturas unidas.
 > - **Resultado final:** se conserva el **30–41 %** de los pares de cada muestra (35 % en promedio), con un promedio de **83 966 lecturas por muestra**; 11.Universitaria es la de menor profundidad (35 456).
 > - Los valores de `input` pueden diferir en unas pocas lecturas de los de `seqs_quality_trimmed.qzv`: las salidas que se copiaron se generaron con una versión anterior del recorte, que incluía la cola del adaptador.
-
-> **[Captura pendiente: pestaña *Overview* de `table_denoised.qzv`]**
-
-**Figura 9.** Pestaña *Overview* de `table_denoised.qzv`: número de muestras, número de ASVs (*features*), frecuencia total y distribución de lecturas por muestra y por ASV.
-
-> **Comentario (figura 9):**
-> - La tabla tiene **24 muestras y 13 298 ASVs**, con **2 015 186 lecturas** en total.
-> - El histograma de frecuencia por ASV está muy sesgado: unos pocos ASVs concentran la mayoría de las lecturas y la mayor parte aparece pocas veces. Es lo habitual en comunidades microbianas.
-> - Como referencia, Romero *et al.* obtuvieron 92 064 lecturas finales por muestra en promedio y 23 682 ASVs: procesaron los datos con DADA2 en R, juntaron las lecturas de cada muestra con su réplica y usaron otros parámetros de truncado.
-
-> **[Captura pendiente: `representatives.qzv`]**
-
-**Figura 10.** Tabla de `representatives.qzv`: estadísticas de longitud de los ASVs y lista de secuencias.
-
-> **Comentario (figura 10):**
-> - Los 13 298 ASVs miden entre **235 y 452 nt**, con una mediana de **422 nt**. La distribución tiene dos grupos, uno de ~402–405 nt y otro de ~422–428 nt: la longitud de la región V3-V4 varía entre linajes bacterianos.
-> - Los ASVs mucho más cortos que el resto (menos de ~380 nt) son sospechosos: pueden ser amplificaciones inespecíficas o artefactos. Se revisan con la taxonomía (sección 6).
-> - Al hacer clic en una secuencia se puede enviar directamente a BLAST del NCBI.
 
 > **Punto de control:** ¿En qué etapa de DADA2 se pierden más lecturas? Relacione esa pérdida con la calidad de las lecturas (figura 6) y con el solapamiento que calculó en la sección 4. ¿Qué parámetro de DADA2 cambiaría para recuperar más lecturas, y qué riesgo tendría ese cambio?
 
@@ -495,30 +430,16 @@ Saved FeatureData[Taxonomy] to: taxa.qza
 
 ```bash
 qiime metadata tabulate --m-input-file taxa.qza --o-visualization visualization/taxa.qzv
-
-Saved Visualization to: visualization/taxa.qzv
 ```
 
 > **Comentario:** convierte la taxonomía en una tabla interactiva, con una fila por ASV.
 
 ### Descargar `taxa.qzv` y abrirlo en QIIME 2 View
 
-> **[Captura pendiente: `taxa.qzv`]**
-
-**Figura 11.** Tabla de `taxa.qzv`: identificador de cada ASV (`Feature ID`), su linaje (`Taxon`) y la confianza de la asignación (`Confidence`).
-
-> **Comentario (figura 11):**
-> - `Feature ID` es un código MD5 calculado a partir de la secuencia del ASV: dos ASVs idénticos tienen el mismo código en cualquier estudio.
-> - `Taxon` lista los niveles separados por punto y coma, con un prefijo que indica el rango: `d__` dominio, `p__` filo, `c__` clase, `o__` orden, `f__` familia, `g__` género y `s__` especie.
-> - El clasificador se entrenó sin etiquetas de especie, por lo que `s__` siempre queda vacío: con un fragmento de ~420 nt del 16S rara vez se puede distinguir una especie de otra.
-> - Use el buscador de la tabla para ubicar géneros de interés (por ejemplo, *Arcobacter* o *Flavobacterium*).
-
 ### Exportar la taxonomía y cuantificar la resolución de la asignación
 
 ```bash
 qiime tools export --input-path taxa.qza --output-path exported_taxonomy
-
-Exported taxa.qza as TSVTaxonomyDirectoryFormat to directory exported_taxonomy
 ```
 
 > **Comentario:**
@@ -604,8 +525,6 @@ grep -c "Chloroplast" exported_taxonomy/taxonomy.tsv
 
 ```bash
 qiime taxa filter-table --i-table table.qza --i-taxonomy taxa.qza --p-include p__ --p-exclude mitochondria,chloroplast --o-filtered-table table_f.qza
-
-Saved FeatureTable[Frequency] to: table_f.qza
 ```
 
 > **Comentario:**
@@ -617,8 +536,6 @@ Saved FeatureTable[Frequency] to: table_f.qza
 
 ```bash
 qiime taxa filter-seqs --i-sequences representatives.qza --i-taxonomy taxa.qza --p-include p__ --p-exclude mitochondria,chloroplast --o-filtered-sequences representatives_f.qza
-
-Saved FeatureData[Sequence] to: representatives_f.qza
 ```
 
 > **Comentario:**
@@ -630,8 +547,6 @@ Saved FeatureData[Sequence] to: representatives_f.qza
 
 ```bash
 qiime taxa barplot --i-table table_f.qza --i-taxonomy taxa.qza --m-metadata-file metadata.txt --o-visualization visualization/taxa_barplot.qzv
-
-Saved Visualization to: visualization/taxa_barplot.qzv
 ```
 
 > **Comentario:**
@@ -641,27 +556,6 @@ Saved Visualization to: visualization/taxa_barplot.qzv
 > - `--o-visualization visualization/taxa_barplot.qzv`: gráfico de barras interactivo.
 
 ### Descargar `taxa_barplot.qzv` y abrirlo en QIIME 2 View
-
-> **[Captura pendiente: `taxa_barplot.qzv` en el nivel 2 (filo), con las muestras ordenadas por altitud]**
-
-**Figura 12.** Gráfico de barras apiladas de `taxa_barplot.qzv` en el nivel taxonómico 2 (filo), con las muestras ordenadas por altitud de mayor a menor. Cada barra es una muestra y cada color, un filo; la altura de cada segmento es su abundancia relativa.
-
-> **Comentario (figura 12):**
-> - En *Taxonomic Level* se elige el rango (1 = dominio … 6 = género; el nivel 7 no agrega información, porque el clasificador no asigna especie). En *Sort Samples By* se ordenan las muestras según una columna de la metadata. *Download* permite descargar la figura y el CSV con las abundancias de cada nivel.
-> - Abundancia relativa promedio de los filos principales en cada subcuenca (en %):
->
-> | Filo | Upper Rímac | Parac-Upper Rímac | Santa Eulalia-Parac | Santa Eulalia | Jicamarca-Santa Eulalia | Lower Rímac |
-> |---|---|---|---|---|---|---|
-> | *Pseudomonadota* | 36,2 | 32,3 | 30,2 | 40,7 | 50,0 | 40,9 |
-> | *Bacteroidota* | 26,6 | 34,2 | 32,1 | 33,8 | 30,4 | 15,6 |
-> | *Campylobacterota* | 8,0 | 5,6 | 3,0 | 3,5 | 5,5 | 30,1 |
-> | *Fusobacteriota* | 19,3 | 15,9 | 15,2 | 1,6 | 2,0 | 8,1 |
-> | *Bacillota* | 4,5 | 4,6 | 1,9 | 10,1 | 4,7 | 2,8 |
->
-> - Cinco filos reúnen alrededor del 93 % de las lecturas en todo el río. Los mismos cinco, con sus nombres anteriores (*Proteobacteria*, *Bacteroidota*, *Campylobacterota*, *Fusobacteriota* y *Firmicutes*), son los que reporta el artículo.
-> - El cambio más marcado está en el **Rímac bajo**: *Campylobacterota* sube a 30 % (frente a 3–8 % en las demás subcuencas) y *Bacteroidota* baja a la mitad.
-> - *Fusobacteriota* abunda en las tres subcuencas altas (15–19 %) y cae bruscamente desde Santa Eulalia (menos de 2 %). El artículo describe este mismo descenso de Fusobacteriia entre Chacahuaro y Huachipa.
-> - Cambie al nivel 3 (clase): *Gammaproteobacteria*, *Bacteroidia*, *Campylobacteria*, *Fusobacteriia*, *Alphaproteobacteria* y *Clostridia* son las clases más frecuentes, como en la figura 4 del artículo.
 
 > **Punto de control:** Cambie al nivel 6 (género). ¿Qué géneros dominan en las subcuencas altas y cuáles en el Rímac bajo? ¿Coinciden con los que reporta el artículo? Busque en la literatura qué tipo de ambiente o de contaminación indica cada uno. Este análisis forma parte de los resultados de la bitácora.
 
@@ -692,16 +586,12 @@ Saved Phylogeny[Rooted] to: rooted_tree.qza
 
 ```bash
 qiime tools export --input-path table_f.qza --output-path exported_table
-
-Exported table_f.qza as BIOMV210DirFmt to directory exported_table
 ```
 
 > **Comentario:** exporta la tabla filtrada en formato BIOM (versión 2.1). La carpeta `exported_table` contiene el archivo `feature-table.biom`.
 
 ```bash
 qiime tools export --input-path rooted_tree.qza --output-path exported_tree
-
-Exported rooted_tree.qza as NewickDirectoryFormat to directory exported_tree
 ```
 
 > **Comentario:** exporta el árbol enraizado en formato Newick, un formato de texto que representa el árbol con paréntesis y longitudes de rama. La carpeta `exported_tree` contiene el archivo `tree.nwk`.
@@ -779,101 +669,6 @@ cp exported_tree/tree.nwk rooted_tree.nwk
 > **Importante:** use el servidor oficial, https://www.microbiomeanalyst.ca. El servidor de desarrollo (`dev.microbiomeanalyst.ca`) puede dar errores sin mensaje en el paso de normalización.
 
 ### Ir a MicrobiomeAnalyst, entrar al módulo *Marker Data Profiling* y cargar los tres archivos
-
-> **[Captura pendiente: página de carga de datos de *Marker Data Profiling*]**
-
-**Figura 13.** Página de carga de datos del módulo *Marker Data Profiling*, con el formato BIOM seleccionado, la tabla `feature-table-tax.biom`, la metadata `metadata_MA.txt`, el árbol `rooted_tree.nwk` y las etiquetas taxonómicas de SILVA.
-
-> **Comentario (figura 13):**
-> - Seleccione el formato **BIOM** y cargue `feature-table-tax.biom`: la taxonomía viaja dentro del archivo, por lo que no hace falta una tabla de taxonomía aparte.
-> - Cargue `metadata_MA.txt` como archivo de metadata y `rooted_tree.nwk` como árbol filogenético (opcional; habilita UniFrac y la diversidad filogenética).
-> - En el tipo de etiquetas taxonómicas, indique **SILVA**.
-
-### Revisar la integridad de los datos (*Data Integrity Check*)
-
-> **[Captura pendiente: *Data Integrity Check*]**
-
-**Figura 14.** Página *Data Integrity Check* de MicrobiomeAnalyst: opciones de filtrado por defecto y resumen de los datos cargados (*Microbiome data overview*).
-
-> **Comentario (figura 14):**
-> - **Default Filtering:** MicrobiomeAnalyst ofrece eliminar los ASVs constantes (*Constant features*) y los *singletons*, ya sea los que aparecen en una sola muestra (*One sample occurrence*) o los que tienen una sola lectura en total (*One total count*). Se deja sin marcar *Constant features* y en *Singleton* se elige **None**, para no perder ASVs raros antes del análisis de diversidad alfa.
-> - **Resumen de los datos:**
->   - `Data type`: *OTU abundance table*. MicrobiomeAnalyst trata los ASVs como OTUs.
->   - `File format`: *biom*.
->   - `Sample names match (metadata vs. OTU table)`: **Yes**. Los nombres de las muestras coinciden entre la tabla y la metadata; si apareciera *No*, revise que la primera columna de la metadata se llame `#NAME` y que los nombres sean idénticos.
->   - `Normalized counts detected`: **No**. La tabla tiene conteos crudos, que es lo que se espera.
->   - `OTU annotation`: *SILVA*.
->   - `OTU number`: **13129/13129**. Los mismos 13 129 ASVs de la tabla filtrada en QIIME 2 (sección 7).
->   - `Number of experimental factors`: **2** (uno discreto, `cuenca`, y uno continuo, `altitud`).
->   - `Total read counts`: **2 009 113** y `Average counts per sample`: **83 713**. Coinciden con el resumen de `biom summarize-table`.
-> - En el panel izquierdo, *Lib Size View* descarga el gráfico del tamaño de biblioteca (lecturas por muestra).
-
-### Filtrar los datos (*Data Filtering*)
-
-> **[Captura pendiente: *Data Filtering*]**
-
-**Figura 15.** Página *Data Filtering*, con el filtro de conteos bajos (*Low count filter*) y el filtro de baja varianza (*Low variance filter*).
-
-> **Comentario (figura 15):**
-> - **Low count filter:** elimina los ASVs con muy pocas lecturas en pocas muestras, que suelen ser errores de secuenciación o contaminación de bajo nivel. *Minimum count* es el conteo mínimo y *Prevalence in samples (%)*, el porcentaje de muestras en que debe alcanzarse (también se puede filtrar por la media o la mediana).
-> - **Low variance filter:** elimina el porcentaje indicado de ASVs con menor variación entre muestras (medida como rango intercuartílico, desviación estándar o coeficiente de variación), que no aportan a la comparación entre grupos.
-> - Un filtro se desactiva llevando su barra al extremo izquierdo (valor 0). En la práctica se deja **Minimum count = 0** y **Percentage to remove = 0**, es decir, sin filtrar: la diversidad alfa depende de los ASVs raros, y el filtrado ya se hizo en QIIME 2 con criterios taxonómicos.
-
-### Normalizar los datos (*Normalization*)
-
-> **[Captura pendiente: *Data Normalization*]**
-
-**Figura 16.** Página *Data Normalization*, con las opciones de rarefacción (*Data rarefying*), escalado (*Data scaling*) y transformación (*Data transformation*).
-
-> **Comentario (figura 16):**
-> - **Data rarefying:** submuestrea todas las muestras al mismo número de lecturas. La barra propone por defecto el tamaño de la biblioteca más pequeña (**35 404**, la de 11.Universitaria).
-> - **Data scaling:** *TSS* (proporciones; cada muestra suma 1), *CSS* (escalado de suma acumulada, de metagenomeSeq) o *UQ* (normalización por el cuartil superior).
-> - **Data transformation:** *RLE*, *TMM* o *CLR* (razón logarítmica centrada).
-> - Se puede rarefaccionar y luego escalar **o** transformar, pero no escalar y transformar a la vez: los datos escalados o transformados ya no son conteos.
-> - MicrobiomeAnalyst recomienda rarefaccionar cuando el tamaño de las bibliotecas varía más de 10 veces. Aquí la muestra más grande (113 259) tiene 3,2 veces más lecturas que la más pequeña (35 404), por lo que se deja **Do not rarefy my data**, **Do not scale my data** y **Do not transform my data**.
-
-### Composición taxonómica
-
-> **[Captura pendiente: gráfico de barras apiladas a nivel de género, agrupado por `cuenca`]**
-
-**Figura 17.** Gráfico de barras apiladas (*Stacked Bar/Area Plot*) de la abundancia relativa de los géneros más abundantes en cada subcuenca.
-
-> **Comentario (figura 17):** en *Taxonomic level* elija **Genus** y en *Experimental factor*, **cuenca**. Puede mostrar cada muestra o agrupar las muestras por subcuenca, y limitar el número de géneros que se dibujan (el resto se agrupa como *Others*).
-
-### Diversidad alfa
-
-> **[Captura pendiente: diversidad alfa con el índice de Chao1 a nivel de género]**
-
-**Figura 18.** Diagramas de cajas del índice de Chao1 por subcuenca, a nivel de género, con el resultado de la prueba estadística.
-
-> **Comentario (figura 18):**
-> - La diversidad alfa describe la diversidad **dentro** de cada muestra. Se calculan dos índices:
->   - **Chao1:** estima la **riqueza** (número de taxones), incluidos los no observados, a partir de los taxones con una o dos lecturas.
->   - **Shannon:** combina riqueza y **equidad**; es mayor cuando hay muchos taxones con abundancias parecidas y menor cuando uno o pocos dominan.
-> - Elija el índice (*Diversity measure*), el nivel taxonómico (*Taxonomic level*: **Family** y luego **Genus**) y el factor (*Experimental factor*: **cuenca**). Repita el análisis para las cuatro combinaciones.
-> - Para la prueba estadística use la opción paramétrica (ANOVA) o la no paramétrica (Kruskal-Wallis). Con 2 a 4 muestras por subcuenca, la prueba no paramétrica es la más prudente.
-> - Romero *et al.* calcularon Chao1 y Shannon a nivel de ASV y encontraron valores significativamente menores en el Rímac bajo (figura 2 del artículo).
-
-### Diversidad beta
-
-> **[Captura pendiente: PCoA con la distancia de Bray-Curtis a nivel de género]**
-
-**Figura 19.** Análisis de coordenadas principales (PCoA) basado en la distancia de Bray-Curtis, con las muestras coloreadas por subcuenca y el resultado de la PERMANOVA.
-
-> **[Captura pendiente: NMDS con la distancia de Bray-Curtis a nivel de género]**
-
-**Figura 20.** Escalamiento multidimensional no métrico (NMDS) basado en la distancia de Bray-Curtis, con las muestras coloreadas por subcuenca.
-
-> **Comentario (figuras 19 y 20):**
-> - La diversidad beta compara la composición **entre** muestras. Cada punto es una muestra: cuanto más cerca están dos puntos, más se parecen sus comunidades.
-> - **Distancia de Bray-Curtis:** mide la disimilitud entre dos muestras a partir de las abundancias de los taxones compartidos; va de 0 (composición idéntica) a 1 (ningún taxón compartido). Con el árbol cargado también puede usar **UniFrac**, que considera además el parentesco filogenético entre los ASVs.
-> - **PCoA:** proyecta las distancias en ejes ordenados según la variación que explican; el porcentaje de cada eje indica cuánta variación de la matriz de distancias representa.
-> - **NMDS:** ordena las muestras para conservar el **orden** de las distancias, no sus valores. Su calidad se mide con el **stress**: por debajo de 0,1 la representación es buena; por encima de 0,2, poco confiable.
-> - **PERMANOVA:** prueba si la composición difiere entre los grupos del factor (aquí, las subcuencas). Reporte el valor de F, el R² (proporción de la variación explicada por el factor) y el valor de *p*.
-> - Repita ambos métodos a nivel de **Family** y de **Genus**.
-> - Romero *et al.* usaron un MDS con la distancia de Bray-Curtis sobre datos normalizados con VST (DESeq2) y encontraron que las muestras del Rímac bajo se agrupan entre sí y se separan de las demás subcuencas (figura 3 del artículo).
-
-> **Punto de control:** ¿Qué subcuenca tiene la menor riqueza y la menor diversidad? ¿Cambia la conclusión entre familia y género, o entre Chao1 y Shannon? En la ordenación, ¿las réplicas quedan junto a su muestra? ¿Las muestras se separan por subcuenca o siguen un gradiente de altitud?
 
 ### Estructura de carpetas esperada al finalizar
 
