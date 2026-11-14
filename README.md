@@ -122,7 +122,7 @@ El servidor tiene 64 hilos y 180 GB de RAM, y lo usan **6 grupos a la vez**. Cad
 |---|---|---|
 | 3 | Importación y reporte de calidad | 5–10 min |
 | 4 | cutadapt y reporte de calidad | 5–15 min |
-| 5 | DADA2 | más de 1 h: **no se ejecuta**, se copian las salidas |
+| 5 | DADA2 | más de 6 h: **no se ejecuta**, se copian las salidas |
 | 6 | Clasificación taxonómica | 5–20 min |
 | 8 | Árbol filogenético (MAFFT + FastTree) | 5–15 min |
 
