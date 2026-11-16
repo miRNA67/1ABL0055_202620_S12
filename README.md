@@ -708,23 +708,4 @@ cp exported_tree/tree.nwk rooted_tree.nwk
         └── taxa_barplot.qzv
 ```
 
-### Bitácora bioinformática:
 
-Debe incluir las siguientes secciones. Cada comando debe presentarse con su resultado, seguido de su explicación; cada tabla, figura o captura debe estar numerada, tener una leyenda y estar explicada en el texto:
-
-1. **Carátula** (usar la carátula del modelo de bitácora, con los 6 integrantes del grupo)
-2. **Título**
-3. **Objetivo de la práctica**
-4. **Metodología:** flujograma de los análisis realizados (lecturas FASTQ → importación → cutadapt → DADA2 → clasificación con SILVA 138.2 → filtrado → gráfico de barras → árbol filogenético → exportación a BIOM → MicrobiomeAnalyst: integridad, filtrado, normalización, composición, diversidad alfa y beta), con los archivos de entrada y salida de cada etapa
-5. **Metodología:** estructura de las carpetas
-6. **Metodología:** versión de cada programa y base de datos (QIIME 2, SILVA y MicrobiomeAnalyst, con la fecha del análisis) y parámetros principales (primers y opciones de cutadapt, parámetros de DADA2, umbral de confianza del clasificador, criterios de filtrado de ASVs, y opciones de filtrado, normalización, índices, nivel taxonómico, distancia y prueba estadística en MicrobiomeAnalyst)
-7. **Resultados:** número de lecturas por muestra en los datos crudos y después del recorte de primers, porcentaje conservado y calidad por posición de las lecturas forward y reverse
-8. **Resultados:** estadísticas del denoising (lecturas que se conservan en cada etapa de DADA2), número de ASVs, distribución de su longitud y profundidad final por muestra
-9. **Resultados:** resolución de la asignación taxonómica (porcentaje de ASVs clasificados hasta filo, familia y género) y número de ASVs eliminados en el filtrado (sin asignar, solo dominio, mitocondrias y cloroplastos)
-10. **Resultados:** composición taxonómica a nivel de filo y de género por subcuenca (gráfico de barras e interpretación de los géneros dominantes)
-11. **Resultados:** diversidad alfa (Chao1 y Shannon) a nivel de familia y de género, con la prueba estadística
-12. **Resultados:** diversidad beta (PCoA y NMDS con la distancia de Bray-Curtis) a nivel de familia y de género, con la PERMANOVA y el stress del NMDS
-13. **Discusión:**
-    - ¿Qué índice de diversidad alfa y qué nivel taxonómico representan mejor la diversidad de cada muestra? Justifique con sus resultados.
-    - ¿Qué método de ordenación representa mejor la similitud o disimilitud entre las muestras? Considere la subcuenca, la altitud y la posición de las réplicas.
-    - ¿Sus resultados coinciden con los de Romero *et al.* (2021)? Explique las diferencias según el método: procesamiento (QIIME 2 frente a DADA2 en R, réplicas analizadas por separado o juntas), versión de SILVA y nomenclatura de los filos, clasificador y resolución hasta especie, y normalización usada en la diversidad beta.
